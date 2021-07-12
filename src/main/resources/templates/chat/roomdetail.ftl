@@ -47,7 +47,7 @@
     <script src="/webjars/stomp-websocket/2.3.3-1/stomp.min.js"></script>
     <script>
         // websocket & stomp initialize
-        var sock = new SockJS("/ws-stomp");
+        var sock = new SockJS("http://localhost:8081/ws-stomp");
         var ws = Stomp.over(sock);
         // vue.js
         var vm = new Vue({
@@ -66,7 +66,12 @@
                 var _this = this;
                 axios.get('/chat/user').then(response => {
                     _this.token = response.data.token;
-                    ws.connect({"token":_this.token}, function(frame) {
+
+                    var header = {
+                    "token" : _this.token
+                    };
+
+                    ws.connect(header, function(frame) {
                         ws.subscribe("/sub/chat/room/"+_this.roomId, function(message) {
                             var recv = JSON.parse(message.body);
                             _this.recvMessage(recv);
